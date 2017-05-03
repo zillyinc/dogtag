@@ -30,7 +30,7 @@ module Icicle
       redis_response[SECONDS_INDEX]
     end
 
-    def microseconds
+    def microseconds_part
       redis_response[MICROSECONDS_INDEX]
     end
 

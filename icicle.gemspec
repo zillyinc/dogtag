@@ -15,4 +15,5 @@ Gem::Specification.new do |s|
   #s.homepage = 'https://github.com/?'
   #s.license = 'MIT'
   s.add_dependency('redis', '~> 3.3')
+  s.add_development_dependency('rspec', '~> 3.5')
 end

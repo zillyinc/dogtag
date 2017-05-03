@@ -6,8 +6,11 @@ module Icicle
 
     def ids
       response.sequence.map do |sequence|
-        # shifted_timestamp | shifted_logical_shard_id | sequence
-        shifted_timestamp | shifted_logical_shard_id | sequence
+        (
+          shifted_timestamp |
+          shifted_logical_shard_id |
+          (sequence << Icicle::SEQUENCE_SHIFT)
+        )
       end
     end
 
@@ -16,16 +19,8 @@ module Icicle
     attr_reader :count
 
     def shifted_timestamp
-      custom_timestamp << Icicle::TIMESTAMP_SHIFT
-    end
-
-    def custom_timestamp
-      timestamp - Icicle::CUSTOM_EPOCH
-    end
-
-    def timestamp
-      # Convert seconds and microseconds to milliseconds
-      (response.seconds * Icicle::ONE_SECOND_IN_MILLIS) + (response.microseconds / Icicle::ONE_MILLI_IN_MICRO_SECS)
+      timestamp = Timestamp.from_redis(response.seconds, response.microseconds_part)
+      timestamp.with_epoch(Icicle::CUSTOM_EPOCH).milliseconds << Icicle::TIMESTAMP_SHIFT
     end
 
     def shifted_logical_shard_id

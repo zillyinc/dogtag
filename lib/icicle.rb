@@ -14,9 +14,6 @@ module Icicle
   LOGICAL_SHARD_ID_SHIFT = SEQUENCE_BITS
   TIMESTAMP_SHIFT = SEQUENCE_BITS + LOGICAL_SHARD_ID_BITS
 
-  ONE_SECOND_IN_MILLIS = 1000
-  ONE_MILLI_IN_MICRO_SECS = 1000
-
   LOGICAL_SHARD_ID_KEY = 'icicle-generator-logical-shard-id'.freeze
 
   def self.logical_shard_id=(logical_shard_id)
@@ -36,3 +33,4 @@ require 'icicle/generator'
 require 'icicle/id'
 require 'icicle/request'
 require 'icicle/response'
+require 'icicle/timestamp'

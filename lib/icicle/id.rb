@@ -15,11 +15,7 @@ module Icicle
     end
 
     def timestamp
-      custom_timestamp + Icicle::CUSTOM_EPOCH
-    end
-
-    def time
-      Time.at(timestamp / Icicle::ONE_SECOND_IN_MILLIS)
+      @timestamp ||= Timestamp.new(custom_timestamp, epoch: Icicle::CUSTOM_EPOCH)
     end
 
     def logical_shard_id
@@ -27,7 +23,7 @@ module Icicle
     end
 
     def sequence
-      (id & SEQUENCE_MAP) >> Icicle::SEQUENCE_BITS
+      (id & SEQUENCE_MAP) >> Icicle::SEQUENCE_SHIFT
     end
   end
 end
