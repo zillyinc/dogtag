@@ -31,4 +31,12 @@ describe 'Icicle.generate_ids' do
     expect(ids.map(&:sequence)).to all be_between 0, Icicle::Request::MAX_SEQUENCE
     expect(ids.map(&:sequence)).to eql ids.map(&:sequence).sort
   end
+
+  context 'when count is more than the Lua script can return in one shot' do
+    let(:count) { Icicle::Request::MAX_SEQUENCE + 100 }
+
+    it 'generates the requested amount of IDs' do
+      expect(subject.length).to eql count
+    end
+  end
 end

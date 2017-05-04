@@ -25,7 +25,19 @@ module Icicle
   end
 
   def self.generate_ids(count)
-    Generator.new(count).ids
+    ids = []
+
+    # The Lua script can't always return as many IDs as you may want. So we loop
+    # until we have the exact amount.
+    while ids.length < count
+      initial_id_count = ids.length
+      ids += Generator.new(count - ids.length).ids
+
+      # Ensure the ids array keeps growing as infinite loop insurance
+      return ids unless ids.length > initial_id_count
+    end
+
+    ids
   end
 end
 
