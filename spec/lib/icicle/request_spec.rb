@@ -41,27 +41,36 @@ describe Icicle::Request do
   end
 
   describe '#response' do
-    before do
-      redis_client = double
+    context 'when no error is raised' do
+      before do
+        redis_client = double
 
-      expect(subject).to receive(:lua_script).and_return lua_script
-      expect(subject).to receive(:redis).and_return redis_client
-      expect(redis_client).to receive(:eval).with(
-        lua_script,
-        keys: keys
-      ).and_return dummy_redis_response(count: count)
+        expect(subject).to receive(:lua_script).and_return lua_script
+        expect(subject).to receive(:redis).and_return redis_client
+        expect(redis_client).to receive(:eval).with(
+          lua_script,
+          keys: keys
+        ).and_return dummy_redis_response(count: count)
+      end
+
+      it { expect(subject.response).to be_a Icicle::Response }
+
+      context 'when count is one' do
+        it { expect(subject.response.sequence.count).to eql 1 }
+      end
+
+      context 'when count is 5' do
+        let(:count) { 5 }
+
+        it { expect(subject.response.sequence.count).to eql 5 }
+      end
     end
 
-    it { expect(subject.response).to be_a Icicle::Response }
-
-    context 'when count is one' do
-      it { expect(subject.response.sequence.count).to eql 1 }
-    end
-
-    context 'when count is 5' do
-      let(:count) { 5 }
-
-      it { expect(subject.response.sequence.count).to eql 5 }
+    context 'when a Redis::CommandError is raised' do
+      it 'tries up to 5 times' do
+        expect(subject).to receive(:redis_response).exactly(5).times.and_raise Redis::CommandError
+        expect { subject.response }.to raise_error Redis::CommandError
+      end
     end
   end
 end

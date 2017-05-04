@@ -6,16 +6,18 @@ module Icicle
     MIN_LOGICAL_SHARD_ID = 1
     MAX_LOGICAL_SHARD_ID = ~(-1 << Icicle::LOGICAL_SHARD_ID_BITS)
     LUA_SCRIPT_PATH = 'lua/id-generation.lua'.freeze
+    MAX_TRIES = 5
 
     def initialize(count = 1)
       raise ArgumentError, 'count must be a number' unless count.is_a? Numeric
       raise ArgumentError, 'count must be greater than zero' unless count > 0
 
+      @tries = 0
       @count = count
     end
 
     def response
-      Response.new(redis_response)
+      Response.new(try_redis_response)
     end
 
     private
@@ -37,8 +39,24 @@ module Icicle
       ]
     end
 
+    # NOTE: If too many requests come in inside of a millisecond the Lua script
+    # will lock for 1ms and throw an error. This is meant to retry in those cases.
+    def try_redis_response
+      begin
+        @tries += 1
+        redis_response
+      rescue Redis::CommandError => err
+        if @tries < MAX_TRIES
+          # Exponentially sleep more and more on each try
+          sleep (@tries * @tries).to_f / 900
+          retry
+        else
+          raise err
+        end
+      end
+    end
+
     def redis_response
-      # TODO: watch for `Redis::CommandError: Icicle: Cannot generate ID, waiting for lock to expire.` and retry
       @redis_response ||= redis.eval(lua_script, keys: lua_args)
     end
   end
