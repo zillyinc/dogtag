@@ -1,7 +1,7 @@
 require 'spec_helper'
 include DummyData
 
-describe Icicle::Response do
+describe Dogtag::Response do
   let(:count) { 1 }
   let(:logical_shard_id) { 42 }
   let(:now) { Time.now }

@@ -1,10 +1,10 @@
-module Icicle
+module Dogtag
   class Request
-    include Icicle::Mixins::Redis
+    include Dogtag::Mixins::Redis
 
-    MAX_SEQUENCE = ~(-1 << Icicle::SEQUENCE_BITS)
+    MAX_SEQUENCE = ~(-1 << Dogtag::SEQUENCE_BITS)
     MIN_LOGICAL_SHARD_ID = 1
-    MAX_LOGICAL_SHARD_ID = ~(-1 << Icicle::LOGICAL_SHARD_ID_BITS)
+    MAX_LOGICAL_SHARD_ID = ~(-1 << Dogtag::LOGICAL_SHARD_ID_BITS)
     LUA_SCRIPT_PATH = 'lua/id-generation.lua'.freeze
     MAX_TRIES = 5
 

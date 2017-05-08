@@ -1,4 +1,4 @@
-module Icicle
+module Dogtag
   class Response
     START_SEQUENCE_INDEX = 0
     END_SEQUENCE_INDEX = 1

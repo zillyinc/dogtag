@@ -1,7 +1,7 @@
 require 'spec_helper'
 include DummyData
 
-describe Icicle do
+describe Dogtag do
   subject { described_class }
 
   describe '.logical_shard_id=' do
@@ -10,7 +10,7 @@ describe Icicle do
     it 'sets the logical_shard_id in Redis' do
       redis_client = double
       expect(subject).to receive(:redis).and_return redis_client
-      expect(redis_client).to receive(:set).with(Icicle::LOGICAL_SHARD_ID_KEY, logical_shard_id)
+      expect(redis_client).to receive(:set).with(Dogtag::LOGICAL_SHARD_ID_KEY, logical_shard_id)
 
       subject.logical_shard_id= logical_shard_id
     end
@@ -21,7 +21,7 @@ describe Icicle do
     let(:ids) { [id] }
 
     it 'generates one ID' do
-      expect_any_instance_of(Icicle::Generator).to receive(:ids).and_return ids
+      expect_any_instance_of(Dogtag::Generator).to receive(:ids).and_return ids
       expect(subject.generate_id).to eql id
     end
   end
@@ -32,7 +32,7 @@ describe Icicle do
 
     context 'when count is one' do
       it 'generates one ID' do
-        expect_any_instance_of(Icicle::Generator).to receive(:ids).and_return ids
+        expect_any_instance_of(Dogtag::Generator).to receive(:ids).and_return ids
         expect(subject.generate_ids(count)).to eql ids
       end
     end
@@ -41,7 +41,7 @@ describe Icicle do
       let(:count) { 7 }
 
       it 'generates seven ID' do
-        expect_any_instance_of(Icicle::Generator).to receive(:ids).and_return ids
+        expect_any_instance_of(Dogtag::Generator).to receive(:ids).and_return ids
         expect(subject.generate_ids(count)).to eql ids
       end
     end

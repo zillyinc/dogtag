@@ -1,7 +1,7 @@
 require 'spec_helper'
 include DummyData
 
-describe Icicle::Id do
+describe Dogtag::Id do
   let(:sequence) { 101 }
   let(:logical_shard_id) { 42 }
   let(:now) { Time.now }
@@ -13,13 +13,13 @@ describe Icicle::Id do
   end
 
   describe '#custom_timestamp' do
-    it { expect(subject.custom_timestamp).to eql (now.to_f * 1_000).floor - Icicle::CUSTOM_EPOCH }
+    it { expect(subject.custom_timestamp).to eql (now.to_f * 1_000).floor - Dogtag::CUSTOM_EPOCH }
   end
 
   describe '#timestamp' do
-    it { expect(subject.timestamp).to be_a Icicle::Timestamp }
-    it { expect(subject.timestamp.to_i).to eql (now.to_f * 1_000).floor - Icicle::CUSTOM_EPOCH }
-    it { expect(subject.timestamp.epoch).to eql Icicle::CUSTOM_EPOCH }
+    it { expect(subject.timestamp).to be_a Dogtag::Timestamp }
+    it { expect(subject.timestamp.to_i).to eql (now.to_f * 1_000).floor - Dogtag::CUSTOM_EPOCH }
+    it { expect(subject.timestamp.epoch).to eql Dogtag::CUSTOM_EPOCH }
   end
 
   describe '#logical_shard_id' do

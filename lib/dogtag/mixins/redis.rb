@@ -1,4 +1,4 @@
-module Icicle
+module Dogtag
   module Mixins
     module Redis
       def redis

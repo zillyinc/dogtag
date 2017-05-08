@@ -1,6 +1,6 @@
-local lock_key = 'icicle-generator-lock'
-local sequence_key = 'icicle-generator-sequence'
-local logical_shard_id_key = 'icicle-generator-logical-shard-id'
+local lock_key = 'dogtag-generator-lock'
+local sequence_key = 'dogtag-generator-sequence'
+local logical_shard_id_key = 'dogtag-generator-logical-shard-id'
 
 local max_sequence = tonumber(KEYS[1])
 local min_logical_shard_id = tonumber(KEYS[2])
@@ -8,8 +8,8 @@ local max_logical_shard_id = tonumber(KEYS[3])
 local num_ids = tonumber(KEYS[4])
 
 if redis.call('EXISTS', lock_key) == 1 then
-  redis.log(redis.LOG_NOTICE, 'Icicle: Cannot generate ID, waiting for lock to expire.')
-  return redis.error_reply('Icicle: Cannot generate ID, waiting for lock to expire.')
+  redis.log(redis.LOG_NOTICE, 'Dogtag: Cannot generate ID, waiting for lock to expire.')
+  return redis.error_reply('Dogtag: Cannot generate ID, waiting for lock to expire.')
 end
 
 --[[
@@ -37,7 +37,7 @@ if end_sequence >= max_sequence then
   Note that it only blocks even it rolled around *not* in the same millisecond; this is because unless we do this, the
   IDs won't remain ordered.
   --]]
-  redis.log(redis.LOG_NOTICE, 'Icicle: Rolling sequence back to the start, locking for 1ms.')
+  redis.log(redis.LOG_NOTICE, 'Dogtag: Rolling sequence back to the start, locking for 1ms.')
   redis.call('SET', sequence_key, '-1')
   redis.call('PSETEX', lock_key, 1, 'lock')
   end_sequence = max_sequence

@@ -1,20 +1,20 @@
 module DummyData
   def dummy_redis_response(count: nil, sequence_start: nil, logical_shard_id: nil, now: nil)
     count ||= 1
-    logical_shard_id ||= rand(1..Icicle::Request::MAX_LOGICAL_SHARD_ID)
+    logical_shard_id ||= rand(1..Dogtag::Request::MAX_LOGICAL_SHARD_ID)
     now ||= Time.now
 
     @sequence = (sequence_start - 1) unless sequence_start.nil?
 
-    if @sequence.nil? || @sequence >= Icicle::Request::MAX_SEQUENCE
+    if @sequence.nil? || @sequence >= Dogtag::Request::MAX_SEQUENCE
       @sequence = -1
     end
 
     @sequence += count
     start_sequence = @sequence - count + 1
 
-    if @sequence >= Icicle::Request::MAX_SEQUENCE
-      @sequence = Icicle::Request::MAX_SEQUENCE
+    if @sequence >= Dogtag::Request::MAX_SEQUENCE
+      @sequence = Dogtag::Request::MAX_SEQUENCE
     end
 
     [
@@ -28,14 +28,14 @@ module DummyData
 
   def dummy_id(sequence: nil, logical_shard_id: nil, now: nil)
     sequence ||= 0
-    logical_shard_id ||= rand(1..Icicle::Request::MAX_LOGICAL_SHARD_ID)
+    logical_shard_id ||= rand(1..Dogtag::Request::MAX_LOGICAL_SHARD_ID)
     now ||= Time.now
-    timestamp = Icicle::Timestamp.from_redis(now.to_i, now.usec).with_epoch(Icicle::CUSTOM_EPOCH)
+    timestamp = Dogtag::Timestamp.from_redis(now.to_i, now.usec).with_epoch(Dogtag::CUSTOM_EPOCH)
 
     (
-      (timestamp.milliseconds << Icicle::TIMESTAMP_SHIFT) |
-      (logical_shard_id << Icicle::LOGICAL_SHARD_ID_SHIFT) |
-      (sequence << Icicle::SEQUENCE_SHIFT)
+      (timestamp.milliseconds << Dogtag::TIMESTAMP_SHIFT) |
+      (logical_shard_id << Dogtag::LOGICAL_SHARD_ID_SHIFT) |
+      (sequence << Dogtag::SEQUENCE_SHIFT)
     )
   end
 end

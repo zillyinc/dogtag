@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Icicle::Timestamp do
+describe Dogtag::Timestamp do
   let(:now) { Time.now }
   let(:milliseconds) { (now.to_f * 1_000).floor }
   let(:epoch) { (DateTime.new(now.year, 1, 1).to_time.to_f * 1_000).floor }
-  subject { Icicle::Timestamp.new(milliseconds, epoch: epoch) }
+  subject { Dogtag::Timestamp.new(milliseconds, epoch: epoch) }
 
   describe '#milliseconds' do
     it { expect(subject.milliseconds).to eql milliseconds }

@@ -1,6 +1,6 @@
 require 'bundler/setup'
 require 'rspec'
-require 'icicle'
+require 'dogtag'
 
 Dir['./spec/support/**/*.rb'].each { |f| require f }
 

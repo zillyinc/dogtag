@@ -1,8 +1,8 @@
 require 'redis'
-require 'icicle/mixins/redis'
+require 'dogtag/mixins/redis'
 
-module Icicle
-  extend Icicle::Mixins::Redis
+module Dogtag
+  extend Dogtag::Mixins::Redis
 
   CUSTOM_EPOCH = 1483228800000 # in milliseconds
 
@@ -14,7 +14,7 @@ module Icicle
   LOGICAL_SHARD_ID_SHIFT = SEQUENCE_BITS
   TIMESTAMP_SHIFT = SEQUENCE_BITS + LOGICAL_SHARD_ID_BITS
 
-  LOGICAL_SHARD_ID_KEY = 'icicle-generator-logical-shard-id'.freeze
+  LOGICAL_SHARD_ID_KEY = 'dogtag-generator-logical-shard-id'.freeze
 
   def self.logical_shard_id=(logical_shard_id)
     redis.set LOGICAL_SHARD_ID_KEY, logical_shard_id
@@ -41,8 +41,8 @@ module Icicle
   end
 end
 
-require 'icicle/generator'
-require 'icicle/id'
-require 'icicle/request'
-require 'icicle/response'
-require 'icicle/timestamp'
+require 'dogtag/generator'
+require 'dogtag/id'
+require 'dogtag/request'
+require 'dogtag/response'
+require 'dogtag/timestamp'

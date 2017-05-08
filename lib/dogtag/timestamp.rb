@@ -1,4 +1,4 @@
-module Icicle
+module Dogtag
   class Timestamp
     ONE_SECOND_IN_MILLIS = 1_000
     ONE_MILLI_IN_MICRO_SECS = 1_000

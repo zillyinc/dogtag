@@ -1,14 +1,14 @@
 require 'spec_helper'
 include DummyData
 
-describe Icicle::Request do
+describe Dogtag::Request do
   let(:count) { 1 }
   let(:lua_script) { 'return "Hello World!"' }
   let(:keys) {
     [
-      Icicle::Request::MAX_SEQUENCE,
-      Icicle::Request::MIN_LOGICAL_SHARD_ID,
-      Icicle::Request::MAX_LOGICAL_SHARD_ID,
+      Dogtag::Request::MAX_SEQUENCE,
+      Dogtag::Request::MIN_LOGICAL_SHARD_ID,
+      Dogtag::Request::MAX_LOGICAL_SHARD_ID,
       count
     ]
   }
@@ -53,7 +53,7 @@ describe Icicle::Request do
         ).and_return dummy_redis_response(count: count)
       end
 
-      it { expect(subject.response).to be_a Icicle::Response }
+      it { expect(subject.response).to be_a Dogtag::Response }
 
       context 'when count is one' do
         it { expect(subject.response.sequence.count).to eql 1 }

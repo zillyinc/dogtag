@@ -1,7 +1,7 @@
 require 'spec_helper'
 include DummyData
 
-describe Icicle::Generator do
+describe Dogtag::Generator do
   let(:count) { 1 }
   let(:sequence_start) { 99 }
   let(:logical_shard_id) { 42 }
@@ -14,16 +14,16 @@ describe Icicle::Generator do
       now: now
     )
   }
-  let(:response) { Icicle::Response.new(redis_response)}
+  let(:response) { Dogtag::Response.new(redis_response)}
   subject { described_class.new(count) }
 
   before do
-    expect_any_instance_of(Icicle::Request).to receive(:response).and_return response
+    expect_any_instance_of(Dogtag::Request).to receive(:response).and_return response
   end
 
   describe '#ids' do
     context 'when count is 1' do
-      let(:id) { Icicle::Id.new(subject.ids.first) }
+      let(:id) { Dogtag::Id.new(subject.ids.first) }
 
       it { expect(subject.ids.length).to eql 1 }
       it { expect(subject.ids.first).to eql 33339683635372131 }
