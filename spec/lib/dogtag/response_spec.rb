@@ -3,7 +3,7 @@ include DummyData
 
 describe Dogtag::Response do
   let(:count) { 1 }
-  let(:logical_shard_id) { 42 }
+  let(:logical_shard_id) { random_logical_shard_id }
   let(:now) { Time.now }
   let(:redis_response) { dummy_redis_response(count: count, logical_shard_id: logical_shard_id, now: now) }
   subject { described_class.new(redis_response) }

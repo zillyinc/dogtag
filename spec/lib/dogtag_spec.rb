@@ -2,10 +2,11 @@ require 'spec_helper'
 include DummyData
 
 describe Dogtag do
+  let(:data_type) { random_data_type }
   subject { described_class }
 
   describe '.logical_shard_id=' do
-    let(:logical_shard_id) { 42 }
+    let(:logical_shard_id) { random_logical_shard_id }
 
     it 'sets the logical_shard_id in Redis' do
       redis_client = double
@@ -22,7 +23,7 @@ describe Dogtag do
 
     it 'generates one ID' do
       expect_any_instance_of(Dogtag::Generator).to receive(:ids).and_return ids
-      expect(subject.generate_id).to eql id
+      expect(subject.generate_id(data_type)).to eql id
     end
   end
 
@@ -33,7 +34,7 @@ describe Dogtag do
     context 'when count is one' do
       it 'generates one ID' do
         expect_any_instance_of(Dogtag::Generator).to receive(:ids).and_return ids
-        expect(subject.generate_ids(count)).to eql ids
+        expect(subject.generate_ids(data_type, count)).to eql ids
       end
     end
 
@@ -42,7 +43,7 @@ describe Dogtag do
 
       it 'generates seven ID' do
         expect_any_instance_of(Dogtag::Generator).to receive(:ids).and_return ids
-        expect(subject.generate_ids(count)).to eql ids
+        expect(subject.generate_ids(data_type, count)).to eql ids
       end
     end
   end

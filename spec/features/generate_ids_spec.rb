@@ -2,10 +2,11 @@ require 'spec_helper'
 
 describe 'Dogtag.generate_ids' do
   let(:shard_id) { rand(0..Dogtag::Request::MAX_LOGICAL_SHARD_ID) }
+  let(:data_type) { random_data_type }
   let(:count) { 3 }
   let(:ids) { subject.map { |id| Dogtag::Id.new(id) } }
 
-  subject { Dogtag.generate_ids(count) }
+  subject { Dogtag.generate_ids(data_type, count) }
 
   it 'returns new IDs' do
     expect(subject).to all be_a Numeric
@@ -17,12 +18,16 @@ describe 'Dogtag.generate_ids' do
   end
 
   it 'contains a current timestamp' do
+    expect(ids.map(&:timestamp)).to all be_a Dogtag::Timestamp
+    expect(ids.map(&:custom_timestamp)).to all be_between 0, ~(-1 << Dogtag::TIMESTAMP_BITS)
     expect(ids.map(&:timestamp).map(&:to_time)).to all be_between (Time.now - 1), (Time.now + 1)
   end
 
   it 'contains the logical shard ID' do
     Dogtag.logical_shard_id = shard_id
 
+    expect(ids.map(&:logical_shard_id)).to all be_a Numeric
+    expect(ids.map(&:logical_shard_id)).to all be_between 0, Dogtag::Request::MAX_LOGICAL_SHARD_ID
     expect(ids.map(&:logical_shard_id)).to all eql shard_id
   end
 

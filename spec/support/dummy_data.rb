@@ -1,4 +1,12 @@
 module DummyData
+  def random_logical_shard_id
+    rand(0..Dogtag::Request::MAX_LOGICAL_SHARD_ID)
+  end
+
+  def random_data_type
+    rand(0..(~(-1 << Dogtag::DATA_TYPE_BITS)))
+  end
+
   def dummy_redis_response(count: nil, sequence_start: nil, logical_shard_id: nil, now: nil)
     count ||= 1
     logical_shard_id ||= rand(1..Dogtag::Request::MAX_LOGICAL_SHARD_ID)
@@ -26,15 +34,17 @@ module DummyData
     ]
   end
 
-  def dummy_id(sequence: nil, logical_shard_id: nil, now: nil)
+  def dummy_id(sequence: nil, data_type: nil, logical_shard_id: nil, now: nil)
     sequence ||= 0
-    logical_shard_id ||= rand(1..Dogtag::Request::MAX_LOGICAL_SHARD_ID)
+    data_type ||= random_data_type
+    logical_shard_id ||= random_logical_shard_id
     now ||= Time.now
     timestamp = Dogtag::Timestamp.from_redis(now.to_i, now.usec).with_epoch(Dogtag::CUSTOM_EPOCH)
 
     (
       (timestamp.milliseconds << Dogtag::TIMESTAMP_SHIFT) |
       (logical_shard_id << Dogtag::LOGICAL_SHARD_ID_SHIFT) |
+      (data_type << Dogtag::DATA_TYPE_SHIFT) |
       (sequence << Dogtag::SEQUENCE_SHIFT)
     )
   end
