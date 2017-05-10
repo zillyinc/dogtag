@@ -8,12 +8,27 @@ describe Dogtag do
   describe '.logical_shard_id=' do
     let(:logical_shard_id) { random_logical_shard_id }
 
+    context 'when logical_shard_id is not an Integer' do
+      let(:logical_shard_id) { 'WAT' }
+      it { expect { subject.logical_shard_id = logical_shard_id }.to raise_error ArgumentError }
+    end
+
+    context 'when logical_shard_id is less than 0' do
+      let(:logical_shard_id) { -1 }
+      it { expect { subject.logical_shard_id = logical_shard_id }.to raise_error ArgumentError }
+    end
+
+    context 'when logical_shard_id is more than the max' do
+      let(:logical_shard_id) { Dogtag::Request::MAX_LOGICAL_SHARD_ID + 1 }
+      it { expect { subject.logical_shard_id = logical_shard_id }.to raise_error ArgumentError }
+    end
+
     it 'sets the logical_shard_id in Redis' do
       redis_client = double
       expect(subject).to receive(:redis).and_return redis_client
       expect(redis_client).to receive(:set).with(Dogtag::LOGICAL_SHARD_ID_KEY, logical_shard_id)
 
-      subject.logical_shard_id= logical_shard_id
+      subject.logical_shard_id = logical_shard_id
     end
   end
 

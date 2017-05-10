@@ -20,7 +20,7 @@ describe Dogtag::Generator do
 
   describe '#ids' do
     context 'when arguments are invalid' do
-      context 'when data_type is not a number' do
+      context 'when data_type is not an integer' do
         let(:data_type) { 'foo' }
         it { expect { subject }.to raise_error ArgumentError }
       end
@@ -32,6 +32,16 @@ describe Dogtag::Generator do
 
       context 'when data_type is over the max' do
         let(:data_type) { Dogtag::Generator::MAX_DATA_TYPE + 1 }
+        it { expect { subject }.to raise_error ArgumentError }
+      end
+
+      context 'when count is not an integer' do
+        let(:count) { 'bar' }
+        it { expect { subject }.to raise_error ArgumentError }
+      end
+
+      context 'when count is a negative number' do
+        let(:count) { -1 }
         it { expect { subject }.to raise_error ArgumentError }
       end
     end

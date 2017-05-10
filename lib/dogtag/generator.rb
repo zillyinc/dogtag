@@ -2,7 +2,7 @@ module Dogtag
   class Generator
     MIN_DATA_TYPE = 0
     MAX_DATA_TYPE = ~(-1 << Dogtag::DATA_TYPE_BITS)
-    DATA_TYPE_ALLOWED_RANGE = (MIN_DATA_TYPE..MAX_DATA_TYPE)
+    DATA_TYPE_ALLOWED_RANGE = (MIN_DATA_TYPE..MAX_DATA_TYPE).freeze
 
     def initialize(data_type, count = 1)
       unless data_type.is_a? Integer
@@ -12,6 +12,9 @@ module Dogtag
       unless DATA_TYPE_ALLOWED_RANGE.include? data_type
         raise ArgumentError, "data_type is outside the allowed range of #{DATA_TYPE_ALLOWED_RANGE}"
       end
+
+      raise ArgumentError, 'count must be an integer' unless count.is_a? Integer
+      raise ArgumentError, 'count must be a positive number' if count < 1
 
       @data_type = data_type
       @count = count

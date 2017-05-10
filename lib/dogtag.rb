@@ -19,6 +19,14 @@ module Dogtag
   LOGICAL_SHARD_ID_KEY = 'dogtag-generator-logical-shard-id'.freeze
 
   def self.logical_shard_id=(logical_shard_id)
+    unless logical_shard_id.is_a? Integer
+      raise ArgumentError, 'logical_shard_id must be an integer'
+    end
+
+    unless Dogtag::Request::LOGICAL_SHARD_ID_ALLOWED_RANGE.include? logical_shard_id
+      raise ArgumentError, "logical_shard_id is outside the allowed range of #{Dogtag::Request::LOGICAL_SHARD_ID_ALLOWED_RANGE}"
+    end
+
     redis.set LOGICAL_SHARD_ID_KEY, logical_shard_id
   end
 

@@ -3,8 +3,9 @@ module Dogtag
     include Dogtag::Mixins::Redis
 
     MAX_SEQUENCE = ~(-1 << Dogtag::SEQUENCE_BITS)
-    MIN_LOGICAL_SHARD_ID = 1
+    MIN_LOGICAL_SHARD_ID = 0
     MAX_LOGICAL_SHARD_ID = ~(-1 << Dogtag::LOGICAL_SHARD_ID_BITS)
+    LOGICAL_SHARD_ID_ALLOWED_RANGE = (Dogtag::Request::MIN_LOGICAL_SHARD_ID..Dogtag::Request::MAX_LOGICAL_SHARD_ID).freeze
     LUA_SCRIPT_PATH = 'lua/id-generation.lua'.freeze
     MAX_TRIES = 5
 
