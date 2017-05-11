@@ -11,6 +11,16 @@ module Dogtag
   DATA_TYPE_BITS = 9
   SEQUENCE_BITS = 11
 
+  MIN_LOGICAL_SHARD_ID = 0
+  MAX_LOGICAL_SHARD_ID = ~(-1 << LOGICAL_SHARD_ID_BITS)
+  LOGICAL_SHARD_ID_ALLOWED_RANGE = (MIN_LOGICAL_SHARD_ID..MAX_LOGICAL_SHARD_ID).freeze
+
+  MIN_DATA_TYPE = 0
+  MAX_DATA_TYPE = ~(-1 << DATA_TYPE_BITS)
+  DATA_TYPE_ALLOWED_RANGE = (MIN_DATA_TYPE..MAX_DATA_TYPE).freeze
+
+  MAX_SEQUENCE = ~(-1 << SEQUENCE_BITS)
+
   SEQUENCE_SHIFT = 0
   DATA_TYPE_SHIFT = SEQUENCE_BITS
   LOGICAL_SHARD_ID_SHIFT = SEQUENCE_BITS + DATA_TYPE_BITS
@@ -23,8 +33,8 @@ module Dogtag
       raise ArgumentError, 'logical_shard_id must be an integer'
     end
 
-    unless Dogtag::Request::LOGICAL_SHARD_ID_ALLOWED_RANGE.include? logical_shard_id
-      raise ArgumentError, "logical_shard_id is outside the allowed range of #{Dogtag::Request::LOGICAL_SHARD_ID_ALLOWED_RANGE}"
+    unless Dogtag::LOGICAL_SHARD_ID_ALLOWED_RANGE.include? logical_shard_id
+      raise ArgumentError, "logical_shard_id is outside the allowed range of #{Dogtag::LOGICAL_SHARD_ID_ALLOWED_RANGE}"
     end
 
     redis.set LOGICAL_SHARD_ID_KEY, logical_shard_id

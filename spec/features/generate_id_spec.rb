@@ -26,7 +26,7 @@ describe 'Dogtag.generate_id' do
     Dogtag.logical_shard_id = shard_id
 
     expect(id.logical_shard_id).to be_a Numeric
-    expect(id.logical_shard_id).to be_between 0, Dogtag::Request::MAX_LOGICAL_SHARD_ID
+    expect(id.logical_shard_id).to be_between Dogtag::MIN_LOGICAL_SHARD_ID, Dogtag::MAX_LOGICAL_SHARD_ID
     expect(id.logical_shard_id).to eql shard_id
   end
 
@@ -38,7 +38,7 @@ describe 'Dogtag.generate_id' do
 
   it 'contains a sequence' do
     expect(id.sequence).to be_a Numeric
-    expect(id.sequence).to be_between 0, Dogtag::Request::MAX_SEQUENCE
+    expect(id.sequence).to be_between 0, Dogtag::MAX_SEQUENCE
     expect(id.sequence).to be < Dogtag::Id.new(Dogtag.generate_id(data_type)).sequence
   end
 end

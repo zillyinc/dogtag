@@ -1,11 +1,11 @@
-local lock_key = 'dogtag-generator-lock'
-local sequence_key = 'dogtag-generator-sequence'
 local logical_shard_id_key = 'dogtag-generator-logical-shard-id'
 
 local max_sequence = tonumber(KEYS[1])
-local min_logical_shard_id = tonumber(KEYS[2])
-local max_logical_shard_id = tonumber(KEYS[3])
-local num_ids = tonumber(KEYS[4])
+local data_type = tonumber(KEYS[2])
+local num_ids = tonumber(KEYS[3])
+
+local lock_key = 'data-type-' .. data_type .. '-dogtag-generator-lock'
+local sequence_key = 'data-type-' .. data_type .. '-dogtag-generator-sequence'
 
 if redis.call('EXISTS', lock_key) == 1 then
   redis.log(redis.LOG_NOTICE, 'Dogtag: Cannot generate ID, waiting for lock to expire.')

@@ -1,6 +1,6 @@
 module DummyData
   def random_logical_shard_id
-    rand(0..Dogtag::Request::MAX_LOGICAL_SHARD_ID)
+    rand(Dogtag::MIN_LOGICAL_SHARD_ID..Dogtag::MAX_LOGICAL_SHARD_ID)
   end
 
   def random_data_type
@@ -9,20 +9,20 @@ module DummyData
 
   def dummy_redis_response(count: nil, sequence_start: nil, logical_shard_id: nil, now: nil)
     count ||= 1
-    logical_shard_id ||= rand(1..Dogtag::Request::MAX_LOGICAL_SHARD_ID)
+    logical_shard_id ||= random_logical_shard_id
     now ||= Time.now
 
     @sequence = (sequence_start - 1) unless sequence_start.nil?
 
-    if @sequence.nil? || @sequence >= Dogtag::Request::MAX_SEQUENCE
+    if @sequence.nil? || @sequence >= Dogtag::MAX_SEQUENCE
       @sequence = -1
     end
 
     @sequence += count
     start_sequence = @sequence - count + 1
 
-    if @sequence >= Dogtag::Request::MAX_SEQUENCE
-      @sequence = Dogtag::Request::MAX_SEQUENCE
+    if @sequence >= Dogtag::MAX_SEQUENCE
+      @sequence = Dogtag::MAX_SEQUENCE
     end
 
     [

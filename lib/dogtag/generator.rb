@@ -1,16 +1,12 @@
 module Dogtag
   class Generator
-    MIN_DATA_TYPE = 0
-    MAX_DATA_TYPE = ~(-1 << Dogtag::DATA_TYPE_BITS)
-    DATA_TYPE_ALLOWED_RANGE = (MIN_DATA_TYPE..MAX_DATA_TYPE).freeze
-
     def initialize(data_type, count = 1)
       unless data_type.is_a? Integer
         raise ArgumentError, 'data_type must be an integer'
       end
 
-      unless DATA_TYPE_ALLOWED_RANGE.include? data_type
-        raise ArgumentError, "data_type is outside the allowed range of #{DATA_TYPE_ALLOWED_RANGE}"
+      unless Dogtag::DATA_TYPE_ALLOWED_RANGE.include? data_type
+        raise ArgumentError, "data_type is outside the allowed range of #{Dogtag::DATA_TYPE_ALLOWED_RANGE}"
       end
 
       raise ArgumentError, 'count must be an integer' unless count.is_a? Integer
@@ -49,7 +45,7 @@ module Dogtag
     end
 
     def response
-      @response ||= Request.new(count).response
+      @response ||= Request.new(data_type, count).response
     end
   end
 end

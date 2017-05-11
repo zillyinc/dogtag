@@ -2,19 +2,37 @@ require 'spec_helper'
 include DummyData
 
 describe Dogtag::Request do
+  let(:data_type) { random_data_type }
   let(:count) { 1 }
   let(:lua_script) { 'return "Hello World!"' }
-  let(:keys) {
-    [
-      Dogtag::Request::MAX_SEQUENCE,
-      Dogtag::Request::MIN_LOGICAL_SHARD_ID,
-      Dogtag::Request::MAX_LOGICAL_SHARD_ID,
-      count
-    ]
-  }
-  subject { described_class.new(count) }
+  let(:keys) { [ Dogtag::MAX_SEQUENCE, data_type, count ] }
+  subject { described_class.new(data_type, count) }
 
   describe '.new' do
+    context 'when data_type is not a number' do
+      let(:data_type) { nil }
+
+      it { expect { subject }.to raise_error ArgumentError }
+    end
+
+    context 'when data_type is a negative number' do
+      let(:data_type) { -1 }
+
+      it { expect { subject }.to raise_error ArgumentError }
+    end
+
+    context 'when data_type is outside the allowed range' do
+      let(:data_type) { Dogtag::MAX_DATA_TYPE + 1 }
+
+      it { expect { subject }.to raise_error ArgumentError }
+    end
+
+    context 'when data_type is within the allowed range' do
+      let(:data_type) { random_data_type }
+
+      it { expect { subject }.to_not raise_error }
+    end
+
     context 'when count is not a number' do
       let(:count) { nil }
 

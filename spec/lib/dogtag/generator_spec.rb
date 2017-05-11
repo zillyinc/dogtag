@@ -31,7 +31,7 @@ describe Dogtag::Generator do
       end
 
       context 'when data_type is over the max' do
-        let(:data_type) { Dogtag::Generator::MAX_DATA_TYPE + 1 }
+        let(:data_type) { Dogtag::MAX_DATA_TYPE + 1 }
         it { expect { subject }.to raise_error ArgumentError }
       end
 

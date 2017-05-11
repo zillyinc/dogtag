@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Dogtag.generate_ids' do
-  let(:shard_id) { rand(0..Dogtag::Request::MAX_LOGICAL_SHARD_ID) }
+  let(:shard_id) { random_logical_shard_id }
   let(:data_type) { random_data_type }
   let(:count) { 3 }
   let(:ids) { subject.map { |id| Dogtag::Id.new(id) } }
@@ -27,18 +27,18 @@ describe 'Dogtag.generate_ids' do
     Dogtag.logical_shard_id = shard_id
 
     expect(ids.map(&:logical_shard_id)).to all be_a Numeric
-    expect(ids.map(&:logical_shard_id)).to all be_between 0, Dogtag::Request::MAX_LOGICAL_SHARD_ID
+    expect(ids.map(&:logical_shard_id)).to all be_between Dogtag::MIN_LOGICAL_SHARD_ID, Dogtag::MAX_LOGICAL_SHARD_ID
     expect(ids.map(&:logical_shard_id)).to all eql shard_id
   end
 
   it 'contains a sequence' do
     expect(ids.map(&:sequence)).to all be_a Numeric
-    expect(ids.map(&:sequence)).to all be_between 0, Dogtag::Request::MAX_SEQUENCE
+    expect(ids.map(&:sequence)).to all be_between 0, Dogtag::MAX_SEQUENCE
     expect(ids.map(&:sequence)).to eql ids.map(&:sequence).sort
   end
 
   context 'when count is more than the Lua script can return in one shot' do
-    let(:count) { Dogtag::Request::MAX_SEQUENCE + 100 }
+    let(:count) { Dogtag::MAX_SEQUENCE + 100 }
 
     it 'generates the requested amount of IDs' do
       expect(subject.length).to eql count

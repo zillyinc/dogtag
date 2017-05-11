@@ -2,18 +2,19 @@ module Dogtag
   class Request
     include Dogtag::Mixins::Redis
 
-    MAX_SEQUENCE = ~(-1 << Dogtag::SEQUENCE_BITS)
-    MIN_LOGICAL_SHARD_ID = 0
-    MAX_LOGICAL_SHARD_ID = ~(-1 << Dogtag::LOGICAL_SHARD_ID_BITS)
-    LOGICAL_SHARD_ID_ALLOWED_RANGE = (Dogtag::Request::MIN_LOGICAL_SHARD_ID..Dogtag::Request::MAX_LOGICAL_SHARD_ID).freeze
     LUA_SCRIPT_PATH = 'lua/id-generation.lua'.freeze
     MAX_TRIES = 5
 
-    def initialize(count = 1)
+    def initialize(data_type, count = 1)
+      raise ArgumentError, 'data_type must be a number' unless data_type.is_a? Numeric
+      unless Dogtag::DATA_TYPE_ALLOWED_RANGE.include? data_type
+        raise ArgumentError, "data_type is outside the allowed range of #{Dogtag::DATA_TYPE_ALLOWED_RANGE}"
+      end
       raise ArgumentError, 'count must be a number' unless count.is_a? Numeric
       raise ArgumentError, 'count must be greater than zero' unless count > 0
 
       @tries = 0
+      @data_type = data_type
       @count = count
     end
 
@@ -23,7 +24,7 @@ module Dogtag
 
     private
 
-    attr_reader :count
+    attr_reader :data_type, :count
 
     def lua_script
       File.read(
@@ -32,12 +33,7 @@ module Dogtag
     end
 
     def lua_args
-      lua_args = [
-        MAX_SEQUENCE,
-        MIN_LOGICAL_SHARD_ID,
-        MAX_LOGICAL_SHARD_ID,
-        count
-      ]
+      lua_args = [ MAX_SEQUENCE, data_type, count ]
     end
 
     # NOTE: If too many requests come in inside of a millisecond the Lua script

@@ -19,7 +19,7 @@ describe Dogtag do
     end
 
     context 'when logical_shard_id is more than the max' do
-      let(:logical_shard_id) { Dogtag::Request::MAX_LOGICAL_SHARD_ID + 1 }
+      let(:logical_shard_id) { Dogtag::MAX_LOGICAL_SHARD_ID + 1 }
       it { expect { subject.logical_shard_id = logical_shard_id }.to raise_error ArgumentError }
     end
 

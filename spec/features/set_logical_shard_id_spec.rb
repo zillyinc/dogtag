@@ -1,8 +1,9 @@
 require 'spec_helper'
+include DummyData
 include Dogtag::Mixins::Redis
 
 describe 'Dogtag.logical_shard_id=' do
-  let(:shard_id) { rand(0..Dogtag::Request::MAX_LOGICAL_SHARD_ID) }
+  let(:shard_id) { random_logical_shard_id }
 
   before { redis.del Dogtag::LOGICAL_SHARD_ID_KEY }
 
