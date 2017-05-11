@@ -5,30 +5,47 @@ describe Dogtag do
   let(:data_type) { random_data_type }
   subject { described_class }
 
-  describe '.logical_shard_id=' do
-    let(:logical_shard_id) { random_logical_shard_id }
+  describe '.logical_shard_id_range=' do
+    let(:logical_shard_id_range) { random_logical_shard_id_range }
 
-    context 'when logical_shard_id is not an Integer' do
-      let(:logical_shard_id) { 'WAT' }
-      it { expect { subject.logical_shard_id = logical_shard_id }.to raise_error ArgumentError }
+    context 'when logical_shard_id_range is not a Range' do
+      let(:logical_shard_id_range) { 'WAT' }
+      it { expect { subject.logical_shard_id_range = logical_shard_id_range }.to raise_error ArgumentError }
     end
 
-    context 'when logical_shard_id is less than 0' do
-      let(:logical_shard_id) { -1 }
-      it { expect { subject.logical_shard_id = logical_shard_id }.to raise_error ArgumentError }
+    context 'when logical_shard_id_range is outside the allowed range' do
+      let(:logical_shard_id_range) { random_logical_shard_id..(Dogtag::MAX_LOGICAL_SHARD_ID + 1) }
+      it { expect { subject.logical_shard_id_range = logical_shard_id_range }.to raise_error ArgumentError }
     end
 
-    context 'when logical_shard_id is more than the max' do
-      let(:logical_shard_id) { Dogtag::MAX_LOGICAL_SHARD_ID + 1 }
-      it { expect { subject.logical_shard_id = logical_shard_id }.to raise_error ArgumentError }
-    end
+    context 'when arguments are valid' do
+      let(:redis_client) { double }
+      let(:exists) { false }
 
-    it 'sets the logical_shard_id in Redis' do
-      redis_client = double
-      expect(subject).to receive(:redis).and_return redis_client
-      expect(redis_client).to receive(:set).with(Dogtag::LOGICAL_SHARD_ID_KEY, logical_shard_id)
+      before do
+        allow(subject).to receive(:redis).and_return redis_client
+        expect(redis_client).to receive(:exists).with(Dogtag::LOGICAL_SHARD_ID_RANGE_KEY).and_return exists
+      end
 
-      subject.logical_shard_id = logical_shard_id
+      context "when logical_shard_id_range doesn't exist" do
+        it 'creates the logical_shard_id_range in Redis' do
+          expect(redis_client).to receive(:rpush).with Dogtag::LOGICAL_SHARD_ID_RANGE_KEY, logical_shard_id_range.min
+          expect(redis_client).to receive(:rpush).with Dogtag::LOGICAL_SHARD_ID_RANGE_KEY, logical_shard_id_range.max
+
+          subject.logical_shard_id_range = logical_shard_id_range
+        end
+      end
+
+      context "when logical_shard_id_range already exists" do
+        let(:exists) { true }
+
+        it 'overwrites the logical_shard_id_range in Redis' do
+          expect(redis_client).to receive(:lset).with Dogtag::LOGICAL_SHARD_ID_RANGE_KEY, 0, logical_shard_id_range.min
+          expect(redis_client).to receive(:lset).with Dogtag::LOGICAL_SHARD_ID_RANGE_KEY, 1, logical_shard_id_range.max
+
+          subject.logical_shard_id_range = logical_shard_id_range
+        end
+      end
     end
   end
 

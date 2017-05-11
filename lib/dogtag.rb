@@ -26,18 +26,24 @@ module Dogtag
   LOGICAL_SHARD_ID_SHIFT = SEQUENCE_BITS + DATA_TYPE_BITS
   TIMESTAMP_SHIFT = SEQUENCE_BITS + DATA_TYPE_BITS + LOGICAL_SHARD_ID_BITS
 
-  LOGICAL_SHARD_ID_KEY = 'dogtag-generator-logical-shard-id'.freeze
+  LOGICAL_SHARD_ID_RANGE_KEY = 'dogtag-generator-logical-shard-id-range'.freeze
 
-  def self.logical_shard_id=(logical_shard_id)
-    unless logical_shard_id.is_a? Integer
-      raise ArgumentError, 'logical_shard_id must be an integer'
+  def self.logical_shard_id_range=(logical_shard_id_range)
+    unless logical_shard_id_range.is_a? Range
+      raise ArgumentError, 'logical_shard_id_range must be a range'
     end
 
-    unless Dogtag::LOGICAL_SHARD_ID_ALLOWED_RANGE.include? logical_shard_id
-      raise ArgumentError, "logical_shard_id is outside the allowed range of #{Dogtag::LOGICAL_SHARD_ID_ALLOWED_RANGE}"
+    unless (Dogtag::LOGICAL_SHARD_ID_ALLOWED_RANGE.to_a & logical_shard_id_range.to_a) == logical_shard_id_range.to_a
+      raise ArgumentError, "logical_shard_id_range is outside the allowed range of #{Dogtag::LOGICAL_SHARD_ID_ALLOWED_RANGE}"
     end
 
-    redis.set LOGICAL_SHARD_ID_KEY, logical_shard_id
+    if redis.exists LOGICAL_SHARD_ID_RANGE_KEY
+      redis.lset LOGICAL_SHARD_ID_RANGE_KEY, 0, logical_shard_id_range.min
+      redis.lset LOGICAL_SHARD_ID_RANGE_KEY, 1, logical_shard_id_range.max
+    else
+      redis.rpush LOGICAL_SHARD_ID_RANGE_KEY, logical_shard_id_range.min
+      redis.rpush LOGICAL_SHARD_ID_RANGE_KEY, logical_shard_id_range.max
+    end
   end
 
   def self.generate_id(data_type)

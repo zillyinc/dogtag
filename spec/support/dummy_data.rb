@@ -3,6 +3,11 @@ module DummyData
     rand(Dogtag::MIN_LOGICAL_SHARD_ID..Dogtag::MAX_LOGICAL_SHARD_ID)
   end
 
+  def random_logical_shard_id_range
+    min = random_logical_shard_id
+    min..rand(min..Dogtag::MAX_LOGICAL_SHARD_ID)
+  end
+
   def random_data_type
     rand(0..(~(-1 << Dogtag::DATA_TYPE_BITS)))
   end

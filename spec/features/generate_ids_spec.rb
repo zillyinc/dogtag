@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe 'Dogtag.generate_ids' do
-  let(:shard_id) { random_logical_shard_id }
   let(:data_type) { random_data_type }
   let(:count) { 3 }
   let(:ids) { subject.map { |id| Dogtag::Id.new(id) } }
@@ -23,12 +22,28 @@ describe 'Dogtag.generate_ids' do
     expect(ids.map(&:timestamp).map(&:to_time)).to all be_between (Time.now - 1), (Time.now + 1)
   end
 
-  it 'contains the logical shard ID' do
-    Dogtag.logical_shard_id = shard_id
+  context 'when logical_shard_id_range is a range' do
+    let(:shard_id_range) { random_logical_shard_id_range }
 
-    expect(ids.map(&:logical_shard_id)).to all be_a Numeric
-    expect(ids.map(&:logical_shard_id)).to all be_between Dogtag::MIN_LOGICAL_SHARD_ID, Dogtag::MAX_LOGICAL_SHARD_ID
-    expect(ids.map(&:logical_shard_id)).to all eql shard_id
+    it 'contains one of the logical shard IDs' do
+      Dogtag.logical_shard_id_range = shard_id_range
+
+      expect(ids.map(&:logical_shard_id)).to all be_a Numeric
+      expect(ids.map(&:logical_shard_id)).to all be_between Dogtag::MIN_LOGICAL_SHARD_ID, Dogtag::MAX_LOGICAL_SHARD_ID
+      expect(ids.map(&:logical_shard_id)).to all be_between shard_id_range.min, shard_id_range.max
+    end
+  end
+
+  context 'when logical_shard_id_range is one number' do
+    let(:shard_id) { random_logical_shard_id }
+
+    it 'contains the logical shard ID' do
+      Dogtag.logical_shard_id_range = shard_id..shard_id
+
+      expect(ids.map(&:logical_shard_id)).to all be_a Numeric
+      expect(ids.map(&:logical_shard_id)).to all be_between Dogtag::MIN_LOGICAL_SHARD_ID, Dogtag::MAX_LOGICAL_SHARD_ID
+      expect(ids.map(&:logical_shard_id)).to all eql shard_id
+    end
   end
 
   it 'contains a sequence' do
