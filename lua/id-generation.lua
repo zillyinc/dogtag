@@ -1,17 +1,42 @@
 local logical_shard_id_range_key = 'dogtag-generator-logical-shard-id-range'
+local last_logical_shard_id_key = 'dogtag-generator-last-logical-shard-id'
 
 local max_sequence = tonumber(KEYS[1])
 local data_type = tonumber(KEYS[2])
 local num_ids = tonumber(KEYS[3])
 
+-- Allow one server to acts as multiple shards
+local logical_shard_id_range = redis.call('SORT', logical_shard_id_range_key)
+if next(logical_shard_id_range) == nil then
+  redis.log(redis.LOG_WARNING, 'Dogtag: ' .. logical_shard_id_range_key .. ' has not been set.')
+  return redis.error_reply('Dogtag: ' .. logical_shard_id_range_key .. ' has not been set.')
+end
+local logical_shard_id_min = tonumber(logical_shard_id_range[1])
+local logical_shard_id_max = tonumber(logical_shard_id_range[2])
+
+local logical_shard_id = nil
+if redis.call('EXISTS', last_logical_shard_id_key) == 0 then
+  logical_shard_id = logical_shard_id_min
+else
+  local last_shard_id = tonumber(redis.call('GET', last_logical_shard_id_key))
+
+  if last_shard_id >= logical_shard_id_max or last_shard_id < logical_shard_id_min then
+    logical_shard_id = logical_shard_id_min
+  else
+    logical_shard_id = last_shard_id + 1
+  end
+end
+
+redis.call('SET', last_logical_shard_id_key, logical_shard_id)
+
 --[[
 Scope lock and sequence keys to the specific data_type being requested.
 Ideally, we'd also use the logical_shard_id in the keys so that any per-millisecond limitations would only be per-shard,
 but unfortunately the whole "pure function" limitation keeps us from using a random shard_id here. The best solution may
-be to round robin the shard ID by incrementing a Redis key on each call
+be to round robin the shard ID by incrementing a Redis key on each call.
 ]]--
-local lock_key = 'data-type-' .. data_type .. '-dogtag-generator-lock'
-local sequence_key = 'data-type-' .. data_type .. '-dogtag-generator-sequence'
+local lock_key = 'dogtag-generator-lock-' .. logical_shard_id .. '-' .. data_type
+local sequence_key = 'dogtag-generator-sequence-' .. logical_shard_id .. '-' .. data_type
 
 if redis.call('EXISTS', lock_key) == 1 then
   redis.log(redis.LOG_NOTICE, 'Dogtag: Cannot generate ID, waiting for lock to expire.')
@@ -21,15 +46,6 @@ end
 -- Increment by a set number
 local end_sequence = redis.call('INCRBY', sequence_key, num_ids)
 local start_sequence = end_sequence - num_ids + 1
-
--- Allow one server to acts as multiple shards
-local logical_shard_id_range = redis.call('SORT', logical_shard_id_range_key)
-if next(logical_shard_id_range) == nil then
-  redis.log(redis.LOG_NOTICE, 'Dogtag: ' .. logical_shard_id_range_key .. ' has not been set.')
-  return redis.error_reply('Dogtag: ' .. logical_shard_id_range_key .. ' has not been set.')
-end
-local logical_shard_id_min = tonumber(logical_shard_id_range[1])
-local logical_shard_id_max = tonumber(logical_shard_id_range[2])
 
 if end_sequence >= max_sequence then
   --[[
@@ -63,11 +79,6 @@ outcome of the writes.
 See the "Scripts as pure functions" section at http://redis.io/commands/eval for more information.
 --]]
 local time = redis.call('TIME')
-
--- Redis Lua doesn't really do random without a seed. It's part of the whole "pure function" thing
-math.randomseed(time[2])
-
-local logical_shard_id = math.random(logical_shard_id_min, logical_shard_id_max)
 
 return {
   start_sequence,
