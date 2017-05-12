@@ -57,7 +57,7 @@ describe Dogtag::Generator do
         let(:data_type) { 0 }
 
         it { expect(subject.ids.length).to eql 1 }
-        it { expect(subject.ids.first).to eql 66679367271448675 }
+        it { expect(subject.ids.first).to eql 66679367270662243 }
         it { expect(id.sequence).to eql 99 }
         it { expect(id.data_type).to eql data_type }
         it { expect(id.logical_shard_id).to eql logical_shard_id }
