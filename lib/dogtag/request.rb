@@ -2,7 +2,6 @@ module Dogtag
   class Request
     include Dogtag::Mixins::Redis
 
-    LUA_SCRIPT_PATH = 'lua/id-generation.lua'.freeze
     MAX_TRIES = 5
 
     def initialize(data_type, count = 1)
@@ -26,18 +25,12 @@ module Dogtag
 
     attr_reader :data_type, :count
 
-    def lua_script
-      File.read(
-        File.expand_path "../../#{LUA_SCRIPT_PATH}", File.dirname(__FILE__)
-      )
-    end
-
     def lua_script_sha
-      @@lua_script_sha ||= redis.script(:load, lua_script)
+      @@lua_script_sha ||= redis.script(:load, LuaScript.to_s)
     end
 
-    def lua_args
-      lua_args = [ MAX_SEQUENCE, data_type, count ]
+    def lua_keys
+      @lua_keys ||= [ data_type, count ]
     end
 
     # NOTE: If too many requests come in inside of a millisecond the Lua script
@@ -58,7 +51,7 @@ module Dogtag
     end
 
     def redis_response
-      @redis_response ||= redis.evalsha(lua_script_sha, keys: lua_args)
+      @redis_response ||= redis.evalsha(lua_script_sha, keys: lua_keys)
     end
   end
 end

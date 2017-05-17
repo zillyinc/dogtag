@@ -5,7 +5,7 @@ describe Dogtag::Request do
   let(:data_type) { random_data_type }
   let(:count) { 1 }
   let(:lua_script) { 'return "Hello World!"' }
-  let(:keys) { [ Dogtag::MAX_SEQUENCE, data_type, count ] }
+  let(:keys) { [ data_type, count ] }
   subject { described_class.new(data_type, count) }
 
   describe '.new' do

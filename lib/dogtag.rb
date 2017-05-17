@@ -69,6 +69,7 @@ end
 
 require 'dogtag/generator'
 require 'dogtag/id'
+require 'dogtag/lua_script'
 require 'dogtag/request'
 require 'dogtag/response'
 require 'dogtag/timestamp'

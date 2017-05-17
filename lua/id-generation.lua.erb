@@ -1,9 +1,9 @@
-local logical_shard_id_range_key = 'dogtag-generator-logical-shard-id-range'
+local logical_shard_id_range_key = '<%= Dogtag::LOGICAL_SHARD_ID_RANGE_KEY %>'
 local last_logical_shard_id_key = 'dogtag-generator-last-logical-shard-id'
+local max_sequence = <%= Dogtag::MAX_SEQUENCE %>
 
-local max_sequence = tonumber(KEYS[1])
-local data_type = tonumber(KEYS[2])
-local num_ids = tonumber(KEYS[3])
+local data_type = tonumber(KEYS[1])
+local num_ids = tonumber(KEYS[2])
 
 -- Allow one server to acts as multiple shards
 local logical_shard_id_range = redis.call('SORT', logical_shard_id_range_key)
