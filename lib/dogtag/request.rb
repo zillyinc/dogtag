@@ -32,6 +32,10 @@ module Dogtag
       )
     end
 
+    def lua_script_sha
+      @@lua_script_sha ||= redis.script(:load, lua_script)
+    end
+
     def lua_args
       lua_args = [ MAX_SEQUENCE, data_type, count ]
     end
@@ -54,7 +58,7 @@ module Dogtag
     end
 
     def redis_response
-      @redis_response ||= redis.eval(lua_script, keys: lua_args)
+      @redis_response ||= redis.evalsha(lua_script_sha, keys: lua_args)
     end
   end
 end

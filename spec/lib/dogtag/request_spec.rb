@@ -63,10 +63,10 @@ describe Dogtag::Request do
       before do
         redis_client = double
 
-        expect(subject).to receive(:lua_script).and_return lua_script
         expect(subject).to receive(:redis).and_return redis_client
-        expect(redis_client).to receive(:eval).with(
-          lua_script,
+        expect(subject).to receive(:lua_script_sha).and_return 'dummysha'
+        expect(redis_client).to receive(:evalsha).with(
+          'dummysha',
           keys: keys
         ).and_return dummy_redis_response(count: count)
       end

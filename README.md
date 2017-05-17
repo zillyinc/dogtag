@@ -49,4 +49,3 @@ Related Projects
 TODO
 ----
 - Support multiple Redis servers
-- Use Redis `SCRIPT LOAD` for running the Lua script
