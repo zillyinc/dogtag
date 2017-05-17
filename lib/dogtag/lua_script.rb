@@ -1,3 +1,5 @@
+require 'erb'
+
 module Dogtag
   module LuaScript
     LUA_SCRIPT_PATH = 'lua/id-generation.lua.erb'.freeze
