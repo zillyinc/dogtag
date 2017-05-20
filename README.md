@@ -42,9 +42,20 @@ Dogtag.generate_id data_type, count
 
 *Note: The available data type ID numbers are current 0 - 255.*
 
+Gotchas
+-------
+
+- If you are going to store the ID in the database you'll need to make sure it can store 64 bit integers. In [Rails](http://rubyonrails.org/) this means using `integer` `limit: 8` in your migrations.
+- Be careful of using Dogtag IDs with JavaScript, since it [doesn't handle 64 bit integers well](http://stackoverflow.com/questions/9643626/javascript-cant-handle-64-bit-integers-can-it). You'll probably want to work with them as strings.
+
 Related Projects
 ----------------
 - __[dogtag-web](https://github.com/zillyinc/dogtag-web)__ - Web API for dogtag
+
+Testing
+-------
+
+Simply spin up a Redis server and run `bundle exec rspec`.
 
 TODO
 ----
