@@ -16,7 +16,7 @@ Simply add `gem 'dogtag'` to your `Gemfile` and run `bundle`
 Configuration
 -------------
 
-To configure the connection to your Redis server simply set the `REDIS_URL` environment variable. By default it will connect to `redis://localhost:6379`.
+To configure the connection to your Redis server simply set a `DOGTAG_REDIS_URL` or `REDIS_URL` environment variable. Dogtag will first look for the `DOGTAG_REDIS_URL`, then `REDIS_URL`. If neither are found it will default to `redis://localhost:6379`.
 
 To set the range of logical shard IDs this server should manage, run the command below replacing the number range with a range of numbers, of which none can be shared with another Redis server. If a logical shard ID is shared a separate Redis instance, you may get ID collisions.
 
