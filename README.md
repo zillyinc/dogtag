@@ -37,7 +37,7 @@ Dogtag.generate_id data_type
 ```ruby
 data_type = 42
 count = 100
-Dogtag.generate_id data_type, count
+Dogtag.generate_ids data_type, count
 ```
 
 *Note: The available data type ID numbers are current 0 - 255.*
