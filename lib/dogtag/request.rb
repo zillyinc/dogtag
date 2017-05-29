@@ -41,6 +41,10 @@ module Dogtag
         redis_response
       rescue Redis::CommandError => err
         if @tries < MAX_TRIES
+          # Clear out the cache of the Lua script SHA to force a reload. This
+          # is necessary after a Redis restart
+          @@lua_script_sha = nil
+
           # Exponentially sleep more and more on each try
           sleep (@tries * @tries).to_f / 900
           retry
