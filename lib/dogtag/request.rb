@@ -46,7 +46,7 @@ module Dogtag
           @@lua_script_sha = nil
 
           # Exponentially sleep more and more on each try
-          sleep (@tries * @tries).to_f / 900
+          sleep((@tries * @tries).to_f / 900)
           retry
         else
           raise err
