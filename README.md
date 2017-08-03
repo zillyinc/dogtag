@@ -1,5 +1,5 @@
-Dogtag
-======
+Dogtag [![Code Climate](https://codeclimate.com/repos/5942bc55a2d69c025b00037d/badges/9f08a12606fdc4e23360/gpa.svg)](https://codeclimate.com/repos/5942bc55a2d69c025b00037d/feed) [![Build Status](https://travis-ci.com/zillyinc/dogtag.svg?token=zLzTcsQJDEyJnTYpWzNq&branch=master)](https://travis-ci.com/zillyinc/dogtag) 
+============
 
 A Redis-powered Ruby client for generating unique IDs with Redis for use in distributed systems. Based heavily off of [Icicle](https://github.com/intenthq/icicle/) and [Twitter Snowflake](https://github.com/intenthq/icicle/)
 
