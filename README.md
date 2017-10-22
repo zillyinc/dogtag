@@ -1,4 +1,4 @@
-Dogtag [![Code Climate](https://codeclimate.com/repos/5942bc55a2d69c025b00037d/badges/9f08a12606fdc4e23360/gpa.svg)](https://codeclimate.com/repos/5942bc55a2d69c025b00037d/feed) [![Build Status](https://travis-ci.com/zillyinc/dogtag.svg?token=zLzTcsQJDEyJnTYpWzNq&branch=master)](https://travis-ci.com/zillyinc/dogtag) 
+Dogtag [![Code Climate](https://codeclimate.com/repos/5942bc55a2d69c025b00037d/badges/9f08a12606fdc4e23360/gpa.svg)](https://codeclimate.com/repos/5942bc55a2d69c025b00037d/feed) [![Build Status](https://travis-ci.com/zillyinc/dogtag.svg?token=zLzTcsQJDEyJnTYpWzNq&branch=master)](https://travis-ci.com/zillyinc/dogtag)
 ============
 
 A Redis-powered Ruby client for generating unique IDs with Redis for use in distributed systems. Based heavily off of [Icicle](https://github.com/intenthq/icicle/) and [Twitter Snowflake](https://github.com/intenthq/icicle/)
@@ -16,7 +16,7 @@ Simply add `gem 'dogtag'` to your `Gemfile` and run `bundle`
 Configuration
 -------------
 
-To configure the connection to your Redis server simply set a `DOGTAG_REDIS_URL` or `REDIS_URL` environment variable. Dogtag will first look for the `DOGTAG_REDIS_URL`, then `REDIS_URL`. If neither are found it will default to `redis://localhost:6379`.
+To configure the connection to your Redis server simply set a `DOGTAG_REDIS_URL` or `REDIS_URL` environment variable. Dogtag will first look for the `DOGTAG_REDIS_URL`, then `REDIS_URL`. If neither are found it will default to `redis://127.0.01:6379`.
 
 To set the range of logical shard IDs this server should manage, run the command below replacing the number range with a range of numbers, of which none can be shared with another Redis server. If a logical shard ID is shared a separate Redis instance, you may get ID collisions.
 

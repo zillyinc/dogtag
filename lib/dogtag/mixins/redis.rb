@@ -1,7 +1,7 @@
 module Dogtag
   module Mixins
     module Redis
-      DEFAULT_REDIS_URL = 'redis://localhost:6379'.freeze
+      DEFAULT_REDIS_URL = 'redis://127.0.0.1:6379'.freeze
 
       def redis
         # TODO: Redis config for multiple servers
