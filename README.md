@@ -40,6 +40,18 @@ count = 100
 Dogtag.generate_ids data_type, count
 ```
 
+```ruby
+id_number = Dogtag.generate_id 42
+id = Dogtag::Id.new(id_number)
+id.data_type #=> 42
+id.sequence #=> 1
+id.logical_shard_id #=> 12
+id.custom_timestamp # time since custom epoch
+id.timestamp.to_i #=> 28146773761 # Unix timestamp
+id.timestamp.to_time # Ruby Time object
+id.timestamp.epoch #=> 1483228800000
+```
+
 *Note: The available data type ID numbers are current 0 - 255.*
 
 Gotchas
