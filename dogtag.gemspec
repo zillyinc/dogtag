@@ -14,6 +14,6 @@ Gem::Specification.new do |s|
   s.email = 'adam@codenoble.com'
   s.homepage = 'https://github.com/zillyinc/dogtag'
   #s.license = 'MIT'
-  s.add_dependency('redis', '~> 3.3')
+  s.add_dependency('redis', '> 3.2', '< 5')
   s.add_development_dependency('rspec', '~> 3.5')
 end
