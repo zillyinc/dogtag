@@ -54,6 +54,8 @@ id.timestamp.epoch #=> 1483228800000
 
 *Note: The available data type ID numbers are current 0 - 255.*
 
+A list of existing IDs types and numbers can be found: https://github.com/zillyinc/zilly-backend/blob/master/config/initializers/tellus_dogtag.rb
+
 Gotchas
 -------
 
